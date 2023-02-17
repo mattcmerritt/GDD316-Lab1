@@ -20,6 +20,8 @@ public class Boid : MonoBehaviour
     public float myangle;
     float rotationRate = 0.50f;
 
+    public bool blocked;
+
     // Use this for initialization
     void Awake()
     {
@@ -140,9 +142,28 @@ public class Boid : MonoBehaviour
         bool attracted = (delta.magnitude > spn.attractPushDist);
         Vector3 velAttract = delta.normalized * spn.velocity;
 
+        // check if blocked
+        Vector3 perpVel = Vector3.zero;
+        if (blocked) 
+        {
+            Vector3 target = Attractor.POS - pos;
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, target, out hit, Mathf.Infinity))
+            {
+                Debug.LogWarning("BLOCKAGE DETECTED");
+                perpVel = -Vector3.Cross(target, Vector3.right);
+                perpVel.Normalize();
+                perpVel *= spn.velocity;
+            }
+        }
+
         //Apply all the velocities
         float fdt = Time.fixedDeltaTime;
-        if (velAvoid != Vector3.zero)
+        if (perpVel != Vector3.zero) 
+        {
+            vel = Vector3.Lerp(vel, perpVel, spn.collAvoid);
+        }
+        else if (velAvoid != Vector3.zero)
         {
             vel = Vector3.Lerp(vel, velAvoid, spn.collAvoid);
         }
@@ -174,112 +195,24 @@ public class Boid : MonoBehaviour
         // Finally assign this to the Rigidbody
         rigid.velocity = vel;
         //Lock in the direction of the new velocity
-        //LookAhead();
-
-
-        //Update the line pointing to the attractor with spherecollider radius
-        //Get attractor postion and draw it
-        attPos = Attractor.POS;
-        vecToAtt = attPos - pos;
-        //normalize vectoatt and multiply by collider radius to change vector length
-        vecToAtt = vecToAtt.normalized * myCollider.radius;
-        //Now the line from pos to pos + vecToAtt that is drawn with GL.Lines below
-        // is the vector from the boid pointing towards the attractor with the radius of
-        // the SphereCollider of the boid
-
-        //Now draw a line projecting vecToAtt on the plane:
-        //this is the vector from boid to attractor again
-        //this vector with the y-component equal to zero lies in the plane x,z
-        //it is plotted below between pos and attPos by setting y-components to zero
-
-        //(By the way this only works if the plane is the x,z plane!
-        //To generalize, we would compute the normal to the plane say nplane
-        // then the vectors 
-        //vecToAtt2Perp = Vector3.Dot(nplane,vecToAtt2)*nplane
-        //posPerp = Vector3.Dot(nplane,pos)*nplan
-        //are the ammounts of the pos and vecToAtt2 that are perpendicular to the plane
-        // Now subtract 
-        // vecToAtt2InPlane = vecToAtt2 - vecToAtt2Perp;
-        // posInPlane = pos - posPerp;
-        // ploting a line between these two gives the projectioin of vecToAtt2
-        // in the genearl plane)
-
-        //Now spin each boid about the vector it is moving in
-
-        //create the quaternion and rotate boid via transform.rotation
-        dangle += spinRate * Time.deltaTime;
-        brot = Quaternion.AngleAxis(dangle, vecToAtt);
-
-        //Now update, rotate and draw the vector 15 deg from the boids 'ray' to the attractor
-       float delta_myangle = rotationRate * Time.deltaTime; //update the angle step
-        myangle += delta_myangle; //add the angle step to the angle
-        myq = Quaternion.AngleAxis(myangle, vecToAtt); //update the quaternion rotation
-        //Debug.Log("myq " + myq.w + " " + myq.x + " " + myq.y + " " + myq.z);
-        rotVec2 = myq * rotVec2; //rotate the vector on the 15 deg cone
-
         LookAhead();
-
     }
 
-    /*
-    public void OnRenderObject()
+    private void OnTriggerEnter(Collider other)
     {
-
-    // Draw lines
-    CreateLineMaterial();
-    // Apply the line material
-    lineMaterial.SetPass(0);
-        GL.PushMatrix();
-        // Set transformation matrix for drawing to
-        // match our transform
-        //GL.MultMatrix(transform.localToWorldMatrix);
-
-        
-        GL.Begin(GL.LINES);
-
-        //this is the line pointing from boid to attractor
-        Color color1 = Color.red;
-        GL.Color(color1);        
-        GL.Vertex(pos); // this is the boid position
-        //GL.Vertex(attPos); // this line attractor position
-        GL.Vertex(pos + vecToAtt); //position of end of vector pointing from boid to attractor
-
-        //this is the component of the line pointing from boid to attractor 
-        //that lies in the x,z plane
-        Color color2 = Color.blue;
-        GL.Color(color2);
-        GL.Vertex3(pos.x,0,pos.z);//x,z component of boid position
-        GL.Vertex3(attPos.x,0,attPos.z);//x,z component of attractor position
-
-        //this is the line rotating on the 15 deg cone that is centered on attPos
-        Color color3 = Color.green;
-        GL.Color(color3);
-        GL.Vertex(pos);
-        GL.Vertex(pos + rotVec2);
-
-        GL.End();
-        GL.PopMatrix();
-
-    }
-
-
-static void CreateLineMaterial()
-    {
-        if (!lineMaterial)
+        if (other.gameObject.tag == "Obstacle")
         {
-            // Unity has a built-in shader that is useful for drawing
-            // simple colored things.
-            Shader shader = Shader.Find("Hidden/Internal-Colored");
-            lineMaterial = new Material(shader);
-            lineMaterial.hideFlags = HideFlags.HideAndDontSave;
-            // Turn on alpha blending
-            lineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            lineMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            // Turn backface culling off
-            lineMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-            // Turn off depth writes
-            lineMaterial.SetInt("_ZWrite", 0);
+            blocked = true;
+            Debug.Log("Collision soon!");
         }
     }
-    */
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Obstacle")
+        {
+            blocked = false;
+            Debug.Log("Collision avoided.");
+        }
+    }
 }

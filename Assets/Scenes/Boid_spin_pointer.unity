@@ -329,7 +329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boidPrefab: {fileID: 5498483267279578792, guid: 6f1a10ab21b4275449fe26cbdc35b4e5, type: 3}
   boidAnchor: {fileID: 2063842646}
-  numBoids: 10
+  numBoids: 1
   spawnRadius: 100
   spawnDelay: 0.1
   velocity: 20
@@ -356,11 +356,11 @@ GameObject:
   - component: {fileID: 1110689656}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1110689652
 BoxCollider:
   m_ObjectHideFlags: 0
