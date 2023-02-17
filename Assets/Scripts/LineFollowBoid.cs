@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Boid : MonoBehaviour
+public class LineFollowBoid : MonoBehaviour
 {
     [Header("Set Dynamically")]
     public Rigidbody rigid;
