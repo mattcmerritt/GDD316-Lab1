@@ -532,6 +532,8 @@ MonoBehaviour:
   dangle: 0
   rotVec2: {x: 0, y: 0, z: 0}
   myangle: 0
+  blocked: 0
+  positionInFormation: 0
 --- !u!114 &2155444217269692000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -554,6 +556,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2114875651164963953}
+  - component: {fileID: 4802291194380625846}
   m_Layer: 0
   m_Name: Parts
   m_TagString: Untagged
@@ -579,3 +582,16 @@ Transform:
   m_Father: {fileID: 2431081885199659204}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+--- !u!135 &4802291194380625846
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7950118836650967135}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Center: {x: 0, y: 0, z: 0}

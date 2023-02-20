@@ -30,10 +30,12 @@ public class Neighborhood : MonoBehaviour
         if (b != null)
         {
             if (neighbors.IndexOf(b) == -1)
-            { neighbors.Add(b);
+            { 
+                neighbors.Add(b);
             }
         }
     }
+
     void OnTriggerExit(Collider other)
     {
         Boid b = other.GetComponent<Boid>();
@@ -105,6 +107,57 @@ public class Neighborhood : MonoBehaviour
             // Otherwise, averge their locations
             avg /= nearCount;
             return avg;
+        }
+    }
+
+    public Vector3 leaderPos
+    {
+        get
+        {
+            // Obtain reference to own data
+            Boid self = GetComponent<Boid>();
+            // if this Boid is leading the pack, do not change behavior
+            if (self.positionInFormation == 0)
+            {
+                return transform.position;
+            }
+            
+            // otherwise, return the position of the Boid that is one ahead
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                if (neighbors[i].positionInFormation == self.positionInFormation - 1)
+                {
+                    return neighbors[i].transform.position;
+                }
+            }
+
+            // if a leader was not found, then the boid will set its own path
+            return transform.position;
+        }
+    }
+
+    public bool leaderClose
+    {
+        get
+        {
+            // Obtain reference to own data
+            Boid self = GetComponent<Boid>();
+            if (self.positionInFormation == 0)
+            {
+                return false;
+            }
+
+            // find leader in list of neighboring boids
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                if (neighbors[i].positionInFormation == self.positionInFormation - 1)
+                {
+                    Debug.Log(gameObject.name + " lost its leader");
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

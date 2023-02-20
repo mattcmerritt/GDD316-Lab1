@@ -28,6 +28,9 @@ public class Spawner : MonoBehaviour
     public float                attractPull = 2f;
     public float                attractPush = 2f;
     public float                attractPushDist = 5f;
+
+    // Used to assign the boids a spot in line
+    public int currentPosition = 0;
     
     void Awake()
     {
@@ -44,6 +47,9 @@ public class Spawner : MonoBehaviour
         Boid b = go.GetComponent<Boid>();
         b.transform.SetParent(boidAnchor);
         boids.Add(b);
+        b.positionInFormation = currentPosition;
+        go.name += currentPosition;
+        currentPosition++;
         if (boids.Count < numBoids)
         {
             Invoke("InstantiateBoid", spawnDelay);

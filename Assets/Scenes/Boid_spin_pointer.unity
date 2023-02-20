@@ -327,13 +327,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2af33e788a396d0439d6541cf8664873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boidPrefab: {fileID: 5498483267279578792, guid: 6f1a10ab21b4275449fe26cbdc35b4e5, type: 3}
+  boidPrefab: {fileID: 7151608170254933013, guid: 1fcbf19f6b416a5458229948c3c7b684, type: 3}
   boidAnchor: {fileID: 2063842646}
-  numBoids: 1
+  numBoids: 20
   spawnRadius: 100
   spawnDelay: 0.1
   velocity: 20
-  neighborDist: 20
+  neighborDist: 10
   collDist: 10
   velMatching: 10
   flockCentering: 0.2
@@ -341,6 +341,7 @@ MonoBehaviour:
   attractPull: 3
   attractPush: 2
   attractPushDist: 1
+  currentPosition: 0
 --- !u!1 &1110689651
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +361,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1110689652
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -450,7 +451,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 6, y: 1.5, z: 1.5}
+  m_Size: {x: 1.5, y: 1.5, z: 1.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!850595691 &1296927411
 LightingSettings:
@@ -546,7 +547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2e225b9383780c4b91961eb43542577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 10
+  radius: 5
   xPhase: 0.5
   yPhase: 0.5
   zPhase: 0.1

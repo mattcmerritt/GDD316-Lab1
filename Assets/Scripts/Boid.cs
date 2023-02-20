@@ -21,6 +21,7 @@ public class Boid : MonoBehaviour
     float rotationRate = 0.50f;
 
     public bool blocked;
+    public int positionInFormation;
 
     // Use this for initialization
     void Awake()
@@ -142,50 +143,75 @@ public class Boid : MonoBehaviour
         bool attracted = (delta.magnitude > spn.attractPushDist);
         Vector3 velAttract = delta.normalized * spn.velocity;
 
-        // check if blocked
+        // Part 2: Check if path is blocked by obstacle
         Vector3 perpVel = Vector3.zero;
         if (blocked) 
         {
+            // Draw a vector to the attractor
             Vector3 target = Attractor.POS - pos;
+            // Use a Raycast to check if path is clear
             RaycastHit hit;
             if (Physics.Raycast(transform.position, target, out hit, Mathf.Infinity))
             {
-                Debug.LogWarning("BLOCKAGE DETECTED");
+                // Change velocity to be perpendicular to the vector drawn from the boid to
+                // the attractor to prevent the boid from running into the wall
+                //Debug.LogWarning("BLOCKAGE DETECTED");
                 perpVel = -Vector3.Cross(target, Vector3.right);
                 perpVel.Normalize();
                 perpVel *= spn.velocity;
             }
         }
 
+        // Part 1: Put Boids in Formation
+        // If not leading the line, follow other boids position
+        Vector3 followVel = Vector3.zero;
+        if (neighborhood.leaderPos != transform.position && neighborhood.leaderClose)
+        {
+            Vector3 target = neighborhood.leaderPos - pos;
+            followVel = target;
+            followVel.Normalize();
+            followVel *= spn.velocity * (spn.numBoids - positionInFormation) / spn.numBoids;
+        }
+
         //Apply all the velocities
         float fdt = Time.fixedDeltaTime;
+        // Part 2: Code for avoiding obstacles comes first, then the boids will avoid one another
         if (perpVel != Vector3.zero) 
         {
             vel = Vector3.Lerp(vel, perpVel, spn.collAvoid);
         }
-        else if (velAvoid != Vector3.zero)
+        //else if (velAvoid != Vector3.zero)
+        //{
+        //    vel = Vector3.Lerp(vel, velAvoid, spn.collAvoid);
+        //}
+        // Part 1: Code for following leader boid in a line
+        else if (neighborhood.leaderPos != transform.position)
         {
-            vel = Vector3.Lerp(vel, velAvoid, spn.collAvoid);
+            vel = Vector3.Lerp(vel, followVel, spn.velMatching * fdt);
         }
         else
         {
             if (velAlign != Vector3.zero)
             {
                 vel = Vector3.Lerp(vel, velAlign, spn.velMatching * fdt);
+                //Debug.Log(gameObject.name + " is Aligning");
             }
             if (velCenter != Vector3.zero)
             {
                 vel = Vector3.Lerp(vel, velAlign, spn.flockCentering * fdt);
+                //Debug.Log(gameObject.name + " is Centering");
             }
             if (velAttract != Vector3.zero)
             {
                 if (attracted)
                 {
                     vel = Vector3.Lerp(vel, velAttract, spn.attractPull * fdt);
+                    //Debug.Log(gameObject.name + " is Attracted");
                 }
                 else
                 {
                     vel = Vector3.Lerp(vel, -velAttract, spn.attractPush * fdt);
+                    //Debug.Log(gameObject.name + " is Pushing");
                 }
             }
         }
@@ -198,21 +224,24 @@ public class Boid : MonoBehaviour
         LookAhead();
     }
 
+    // Part 2: Check if path is blocked by obstacle
     private void OnTriggerEnter(Collider other)
     {
+        // Enabling the obstacle detection raycasting if a wall is close
         if (other.gameObject.tag == "Obstacle")
         {
             blocked = true;
-            Debug.Log("Collision soon!");
+            //Debug.Log("Collision soon!");
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        // Disabling the obstacle detection raycasting if a wall is no longer close
         if (other.gameObject.tag == "Obstacle")
         {
             blocked = false;
-            Debug.Log("Collision avoided.");
+            //Debug.Log("Collision avoided.");
         }
     }
 }

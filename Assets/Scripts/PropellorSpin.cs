@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Part 4: Propellor physics for round boids
 // Spinning the plane's propellor relative to the local position of the plane
-
 public class PropellorSpin : MonoBehaviour
 {
     [SerializeField] private GameObject Propellor;

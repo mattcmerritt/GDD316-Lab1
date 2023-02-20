@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Note: This code is essentially a copy of the normal boids, but with different behavior
+// for when the boids are avoiding each other. Now, they will form a line.
 public class LineFollowBoid : MonoBehaviour
 {
     [Header("Set Dynamically")]
