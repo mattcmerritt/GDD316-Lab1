@@ -152,7 +152,7 @@ public class Neighborhood : MonoBehaviour
             {
                 if (neighbors[i].positionInFormation == self.positionInFormation - 1)
                 {
-                    Debug.Log(gameObject.name + " lost its leader");
+                    //Debug.Log(gameObject.name + " lost its leader");
                     return true;
                 }
             }

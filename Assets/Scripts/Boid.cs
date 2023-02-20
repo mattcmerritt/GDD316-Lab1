@@ -170,7 +170,7 @@ public class Boid : MonoBehaviour
             Vector3 target = neighborhood.leaderPos - pos;
             followVel = target;
             followVel.Normalize();
-            followVel *= spn.velocity * (spn.numBoids - positionInFormation) / spn.numBoids;
+            followVel *= spn.velocity;
         }
 
         //Apply all the velocities
@@ -180,12 +180,15 @@ public class Boid : MonoBehaviour
         {
             vel = Vector3.Lerp(vel, perpVel, spn.collAvoid);
         }
+        // Avoidance is now being handled with colliders to prevent the boids from bouncing
+        // around too much around walls. Additionally, boids are set to move slower in line
+        // if they are in the correct spot
         //else if (velAvoid != Vector3.zero)
         //{
         //    vel = Vector3.Lerp(vel, velAvoid, spn.collAvoid);
         //}
         // Part 1: Code for following leader boid in a line
-        else if (neighborhood.leaderPos != transform.position)
+        else if (followVel != Vector3.zero)
         {
             vel = Vector3.Lerp(vel, followVel, spn.velMatching * fdt);
         }
