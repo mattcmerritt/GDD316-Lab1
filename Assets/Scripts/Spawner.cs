@@ -55,4 +55,14 @@ public class Spawner : MonoBehaviour
             Invoke("InstantiateBoid", spawnDelay);
         }
     }
+
+    // clear out list of current boids and delete game objects
+    public void DestroyBoids()
+    {
+        while (boids.Count > 0)
+        {
+            Destroy(boids[0].gameObject);
+            boids.Remove(boids[0]);
+        }
+    }
 }
