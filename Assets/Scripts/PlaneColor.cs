@@ -2,10 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Part 3: Differentiating different boids
+// The plane boids will have a gray metallic color instead of the rainbow ones.
+// They also have a tail and wings to make them look more like a plane.
+// The other type of boid differs in shape (the other is cylindrical with a propellor).
 public class PlaneColor : MonoBehaviour
 {
     private bool ColorSwapped;
 
+    // On the first update, replace the color and trail color with a gray color.
     private void Update()
     {
         if (!ColorSwapped)
